@@ -1,5 +1,6 @@
-import { getPmidListByQuery } from '@/services/pubmedService';
 import { getRecordByFilter } from '@/supabase/crud';
+import { analyzeArticleWithGemini } from '@/services/geminiService';
+import { getAbstractByPmid, getMetadataByPmid, getPmidListByQuery } from '@/services/pubmedService';
 
 export async function GET() {
     try {
@@ -9,7 +10,13 @@ export async function GET() {
             value: true
         });
         const pmids = await getPmidListByQuery(query);
-        return new Response(JSON.stringify(pmids), {
+        const metadata = await getMetadataByPmid(pmids[0]);
+        const abstract = await getAbstractByPmid(pmids[0]);
+        const analysis = await analyzeArticleWithGemini({
+            metadata: metadata,
+            content: abstract
+        });
+        return new Response(JSON.stringify(analysis), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });
