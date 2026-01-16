@@ -31,3 +31,12 @@ export async function getRecordsInList({
     }
     return data;
 }
+
+export async function insertRecord(table, obj){
+    const { data, error } = await supabase
+        .from(table)
+        .insert(obj)
+        .select('*');
+    if(error) console.log(error);
+    return data[0];
+}
