@@ -15,7 +15,7 @@ export async function getMetadataByPmid(pmid) {
         if (!response.ok) {
             throw new Error(`NCBI request error: ${response.status}`);
         }
-        const data = await response.json();
+        const data = await response.json(); 
         const result = data.result?.[pmid];
         if(!result) {
             throw new Error(`No data returned for PMID ${pmid}`);
