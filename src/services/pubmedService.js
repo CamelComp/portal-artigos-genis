@@ -101,12 +101,16 @@ export async function getPmidListByQuery(query) {
         if(!pmids.length) break;
         const existing = await getRecordsInList({
             table: 'articles',
-            select: 'pmid',
-            column: 'pmid',
+            select: 'metadata',
+            column: 'metadata->>pmid',
             values: pmids
         });
-        const existingSet = new Set(existing?.map(a => a.pmid) || []);
-        const fresh = pmids.filter(pmid => !existingSet.has(pmid));
+        const existingSet = new Set(
+            existing?.map(r => r.metadata?.pmid) || []
+        );
+        const fresh = pmids.filter(
+            pmid => !existingSet.has(pmid)
+        );
         for(const pmid of fresh) {
             if(newPmids.length < retMax) {
                 newPmids.push(pmid);
