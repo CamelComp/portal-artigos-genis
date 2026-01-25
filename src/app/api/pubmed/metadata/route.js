@@ -6,10 +6,7 @@ export async function POST(req) {
         const body = await req.json().catch(() => ({}));
         const params = new MetadataParamsModel(body);
         const metadata = await getMetadata(params);
-        return new Response(JSON.stringify({
-            params: params,
-            metadata: metadata
-        }), {
+        return new Response(JSON.stringify({ ...metadata }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
         });

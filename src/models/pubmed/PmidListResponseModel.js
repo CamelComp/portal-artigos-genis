@@ -1,4 +1,12 @@
 export class PmidListResponseModel {
+    total;
+    pmidList;
+    maxdate;
+    mindate;
+    retmax;
+    retstart;
+    sort;
+    term;
 
     constructor({ params, json }) {
         this.total = json.esearchresult.count;
