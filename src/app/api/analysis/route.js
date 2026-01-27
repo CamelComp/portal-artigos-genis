@@ -1,18 +1,29 @@
-import { getMetadata, getPmidList } from '@/services/pubmedService';
+import { getRecordByFilter, insertRecord, updateRecordByFilter } from '@/supabase/crud';
+import { analyzeArticle } from '@/presenters/analysisPresenter';
+import { getAbstract, getMetadata, getPmidList } from '@/services/pubmedService';
 import { PmidListParamsModel } from '@/models/pubmed/PmidListParamsModel';
 import { MetadataParamsModel } from '@/models/pubmed/MetadataParamsModel';
+import { AbstractParamsModel } from '@/models/pubmed/AbstractParamsModel';
 
 export async function POST(req) {
     try {
 
-        const body = await req.json().catch(() => ({}));
+        let body = await req.json().catch(() => ({}));
+
+        if(!body || Object.keys(body).length === 0) {
+            body = await getRecordByFilter({
+                table: 'queries',
+                where: 'isActive',
+                value: true
+            });
+        }
 
         const save = body.save ?? true;
+        const provider = body.provider ?? 'GEMINI';
         const pmidListParams = new PmidListParamsModel(body);
 
         const pmidListData = await getPmidList(pmidListParams);
         const pmidList = pmidListData.pmidList;
-        console.log(pmidList);
 
         const results = [];
 
@@ -22,28 +33,33 @@ export async function POST(req) {
             console.log(`Processando PMID ${pmid} (${i + 1}/${pmidList.length})`);
 
             const metadataParams = new MetadataParamsModel({ pmid });
-            console.log(metadataParams)
             const metadata = await getMetadata(metadataParams);
             
+            const abstractParams = new AbstractParamsModel({ pmid });
+            const abstract = await getAbstract(abstractParams);
             
-            // const abstract = await getAbstractByPmid(pmid);
+            const analysis = await analyzeArticle({
+                terms: pmidListParams.term,
+                metadata,
+                content: abstract,
+                provider: provider
+            });
 
-            // const analysis = await analyzeArticleWithOpenai({
-            //     terms: query.terms.join(' AND '),
-            //     metadata,
-            //     content: abstract
-            // });
+            const unified = { metadata, analysis };
+            results.push(unified);
 
-            // const unified = { metadata, analysis };
-            // results.push(unified);
-            results.push(metadata);
-
-            // if(save) {
-            //     await insertRecord('articles', unified);
-            // }
+            if(save) {
+                await insertRecord('articles', unified);
+                await updateRecordByFilter({
+                    table: 'queries',
+                    values: { retstart: body.retstart + body.retmax },
+                    where: 'isActive',
+                    value: true
+                });
+            }
 
         }
-        console.log(results)
+
         return new Response(JSON.stringify({
             processed: results.length,
             results

@@ -40,3 +40,21 @@ export async function insertRecord(table, obj){
     if(error) console.log(error);
     return data[0];
 }
+
+export async function updateRecordByFilter({
+    table,
+    values,        
+    where = 'id',
+    value
+}) {
+    const { data, status, error } = await supabase
+        .from(table)
+        .update(values)
+        .eq(where, value)
+        .select('*');
+    if(status !== 200) {
+        console.log(error);
+        return null;
+    }
+    return data[0];
+}

@@ -1,19 +1,29 @@
 import { callOpenai } from '@/services/openaiService';
+import { callGemini } from '@/services/geminiService';
 import { buildAnalysisPrompt } from '@/utils/prompts';
-import { AnalysisModel } from '@/models/AnalysisModel';
+import { AI_PROVIDER } from '@/models/AiProviderEnum';
+import { AnalysisExtractionModel } from '@/models/AnalysisExtractionModel';
 
-export async function analyzeArticleWithOpenai({ terms, metadata, content }) {
+export async function analyzeArticle({ 
+    terms, 
+    metadata, 
+    content, 
+    provider 
+}) {
     try {
         const prompt = buildAnalysisPrompt({ terms, metadata, content });
-        const text = await callOpenai({ prompt });
-        try {
-            const jsonString = extractJsonObject(text);
-            return JSON.parse(jsonString);
-        } catch(err) {
-            console.error('Erro ao converter resposta em JSON:', err);
-            console.log('Resposta recebida:', text);
-            return AnalysisModel;
+        let response;
+        switch(provider) {
+            case AI_PROVIDER.GEMINI:
+                response = await callGemini({ prompt });
+                break;
+            case AI_PROVIDER.OPENAI:
+            default:
+                response = await callOpenai({ prompt });
+                break;
         }
+        const jsonString = extractJsonObject(response);
+        return new AnalysisExtractionModel(JSON.parse(jsonString));
     } catch(error) {
         console.error('Erro ao processar artigo com OpenAI:', error);
         return { error: error.message };
