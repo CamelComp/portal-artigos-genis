@@ -19,7 +19,7 @@ export async function callOpenai({
                     content: prompt
                 }
             ],
-            temperature: temperature
+            //temperature: temperature
         });
         return completion.choices[0].message.content.trim();
     } catch(error) {
