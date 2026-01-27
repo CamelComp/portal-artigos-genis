@@ -8,7 +8,8 @@ export async function analyzeArticle({
     terms, 
     metadata, 
     content, 
-    provider 
+    provider,
+    model
 }) {
     try {
         const prompt = buildAnalysisPrompt({ terms, metadata, content });
@@ -19,7 +20,7 @@ export async function analyzeArticle({
                 break;
             case AI_PROVIDER.OPENAI:
             default:
-                response = await callOpenai({ prompt });
+                response = await callOpenai({ prompt, model });
                 break;
         }
         const jsonString = extractJsonObject(response);

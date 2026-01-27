@@ -4,6 +4,7 @@ import { getAbstract, getMetadata, getPmidList } from '@/services/pubmedService'
 import { PmidListParamsModel } from '@/models/pubmed/PmidListParamsModel';
 import { MetadataParamsModel } from '@/models/pubmed/MetadataParamsModel';
 import { AbstractParamsModel } from '@/models/pubmed/AbstractParamsModel';
+import { IA_MODELS } from '@/utils/iaModels';
 
 export async function POST(req) {
     try {
@@ -42,7 +43,8 @@ export async function POST(req) {
                 terms: pmidListParams.term,
                 metadata,
                 content: abstract,
-                provider: provider
+                provider: provider,
+                model: IA_MODELS.openai[5].mini
             });
 
             const unified = { metadata, analysis };

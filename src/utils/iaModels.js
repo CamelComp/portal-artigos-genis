@@ -5,6 +5,9 @@ export const IA_MODELS = {
         }
     },
     openai: {
+        [5]: {
+            mini: 'gpt-5-mini-2025-08-07'
+        },
         [4.1]: {
             default: 'gpt-4.1-2025-04-14',
             mini: 'gpt-4.1-mini-2025-04-14',
