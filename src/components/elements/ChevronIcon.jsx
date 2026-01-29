@@ -1,6 +1,6 @@
 import { ICONS } from '@/utils/icons';
 
-export default function ChevronIcon({
+export function ChevronIcon({
     open = false,
     size = 20,
     className = '',

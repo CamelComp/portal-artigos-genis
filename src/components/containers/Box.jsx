@@ -5,7 +5,7 @@ export function Box({
 }) {
     return (
         <div className={`
-            flex flex-col 
+            flex flex-col gap-2
             ${width} p-4 rounded-2xl
             bg-white shadow-sm
             ${className}

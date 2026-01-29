@@ -1,5 +1,5 @@
-import ChevronIcon from '@/components/elements/ChevronIcon';
 import { useState } from 'react';
+import { ChevronIcon } from '@/components/elements/ChevronIcon';
 
 export function ArticleBox({ article }) {
 
@@ -9,7 +9,7 @@ export function ArticleBox({ article }) {
     const [isOpened, setIsOpened] = useState(false);
 
     return (
-        <div className='bg-background p-2 rounded'>
+        <div className='bg-item-background p-2 rounded'>
             <div onClick={() => setIsOpened(!isOpened)}
                 className='flex justify-between gap-2 cursor-pointer'
             >
@@ -24,7 +24,7 @@ export function ArticleBox({ article }) {
                         <span key={geneName}
                             className={`
                                 flex items-center
-                                bg-green-400 text-xs rounded px-0.5
+                                bg-primary text-white text-xs rounded px-0.5
                             `}
                         >
                             {geneName}
