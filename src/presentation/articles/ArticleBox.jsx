@@ -8,6 +8,20 @@ export function ArticleBox({ article }) {
 
     const [isOpened, setIsOpened] = useState(false);
 
+    function formatPSigWithValue(pSig = [], pValue = []) {
+        if (!Array.isArray(pSig) || !Array.isArray(pValue)) return [];
+
+        return pSig.map((sig, i) => {
+            const value = pValue[i];
+
+            if (value === undefined || value === null) {
+                return sig;
+            }
+
+            return `${sig} (${value})`;
+        });
+    }
+
     return (
         <div className='bg-item-background p-2 rounded'>
             <div onClick={() => setIsOpened(!isOpened)}
@@ -60,6 +74,17 @@ export function ArticleBox({ article }) {
                     <p className='w-full'>
                         <b>Amostra:</b> {analysis.sample 
                             ? analysis.sample.join(', ') 
+                            : 'não encontrado'
+                        }
+                    </p>
+                </div>
+                <div className='flex justify-between'>
+                    <p className='w-full'>
+                        <b>Valor P:</b> {analysis.pSig?.length
+                            ? formatPSigWithValue(
+                                analysis.pSig,
+                                analysis.pValue
+                            ).join(', ')
                             : 'não encontrado'
                         }
                     </p>

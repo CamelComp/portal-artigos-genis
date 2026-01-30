@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { useDataList } from '@/hooks/useDataList';
-import { countGenes, countPolymorphism } from '@/utils/genes';
+import { countGenes, countP, countPolymorphism } from '@/utils/genes';
 import { filterBySearch } from '@/utils/filter';
 import { Box } from '@/components/containers/Box';
 import { Main } from '@/components/containers/Main';
@@ -23,6 +23,9 @@ export default function HomePage() {
         'metadata.title',
         'metadata.pmid',
     ]);
+    console.log(countP(filteredList))
+
+    const pCounts = countP(filteredList);
 
     return (
         <Main>
@@ -43,6 +46,13 @@ export default function HomePage() {
                         data={countPolymorphism(filteredList)} 
                         onBarClick={data => setSearch(data.polymorphism)}
                     />
+                </div>
+                <div className={`
+                    flex justify-between gap-2
+                `}>
+                    <span className='bg-item-background w-full rounded p-2'>Significativos: {pCounts[0].count}</span>
+                    <span className='bg-item-background w-full rounded p-2'>Não Significativos: {pCounts[1].count}</span>
+                    <span className='bg-item-background w-full rounded p-2'>Anomalias: {pCounts[2].count}</span>
                 </div>
                 <ArticleList list={filteredList} />
             </Box>
